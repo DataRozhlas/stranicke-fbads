@@ -2,6 +2,10 @@
 import { kraje } from "./kraje";
 import { ads_sums } from "./ads_sums";
 
+function niceNum(x) { // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript#answer-2901298
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
 let ageCats = [
     "13-17", 
     "18-24",
@@ -12,20 +16,21 @@ let ageCats = [
     "65+",
 ]
 
-let cont = '<select id="partysel">'
+let ordered_spends = Object.keys(ads_sums).map(function(k) {
+    return [k, ads_sums[k].spends]
+})
+ordered_spends.sort(function(a, b) {
+    return b[1] - a[1]
+})
 
-Object.keys(ads).forEach((e) => 
-    cont += '<option value="' + e + '">' + e + '</option>'
+let cont = '<select id="partysel">'
+ordered_spends.forEach((e) => 
+    cont += '<option value="' + e[0] + '">' + e[0] + ' (' + niceNum(e[1]) + ' Kč)' +  '</option>'
 )
 cont += '</select>'
     + '<div id="stats"></div><div id="grafiky"><div class="viz" id="gender"></div>'
     + '<div class="viz" id="regiony"></div></div>'
-
 document.getElementById('dboard').innerHTML = cont
-
-function niceNum(x) { // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript#answer-2901298
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
 
 function writeStats(party) {
     document.getElementById('stats').innerHTML = 'Reklam: <b>' + niceNum(ads_sums[party].ads) + '</b> v celkové ceně <b>' + niceNum(ads_sums[party].spends) + ' Kč</b>'
