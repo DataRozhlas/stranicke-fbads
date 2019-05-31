@@ -18,14 +18,17 @@ Object.keys(ads).forEach((e) =>
     cont += '<option value="' + e + '">' + e + '</option>'
 )
 cont += '</select>'
-    + '<div id="stats"></div><div id="grafiky"><div id="gender"></div>'
-    + '<div id="regiony"></div></div>'
+    + '<div id="stats"></div><div id="grafiky"><div class="viz" id="gender"></div>'
+    + '<div class="viz" id="regiony"></div></div>'
 
 document.getElementById('dboard').innerHTML = cont
 
+function niceNum(x) { // https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript#answer-2901298
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
 function writeStats(party) {
-    console.log(ads_sums[party])
-    document.getElementById('stats').innerHTML = 'Celkem ' + ads_sums[party].ads + ' reklam za ' + ads_sums[party].spends + ' Kč'
+    document.getElementById('stats').innerHTML = 'Reklam: <b>' + niceNum(ads_sums[party].ads) + '</b> v celkové ceně <b>' + niceNum(ads_sums[party].spends) + ' Kč</b>'
 
 }
 
@@ -57,11 +60,11 @@ function drawGender(party) {
         yAxis: {
             min: 0,
             title: {
-                text: 'Průměrný podíl na viděné reklamě'
+                text: 'Průměrný podíl na zobrazené reklamě'
             }
         },
         tooltip: {
-            headerFormat: '<span style="font-size:10px">Věk {point.key}</span><table>',
+            headerFormat: '<span style="font-size:12px; font-weight: bold;">Věk {point.key}</span><table>',
             pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
                 '<td style="padding:0"><b>{point.y:.1f} %</b></td></tr>',
             footerFormat: '</table>',
@@ -106,13 +109,14 @@ function drawMap(party) {
             enabled: false,
         },
         colorAxis: {
-            tickPixelInterval: 100
+            tickPixelInterval: 100,
+            minColor: '#f2f0f7',
+            maxColor: '#54278f',
         },
         tooltip: {
             formatter: function(e) {
-                console.log(this)
-                return this.point.properties.NAZ_CZNUTS3 + '<br>'
-                    + 'průměrný podíl na reklamě: '
+                return '<b>' + this.point.properties.NAZ_CZNUTS3 + '</b><br>'
+                    + 'průměrný podíl na zobrazené reklamě: '
                     + Math.round(this.point.value * 10)/10 + ' %'
             }
         },
@@ -123,7 +127,7 @@ function drawMap(party) {
             name: 'Průměrný podíl',
             states: {
                 hover: {
-                    color: '#a4edba'
+                    color: '#3f007d'
                 }
             },
             dataLabels: {
@@ -137,8 +141,12 @@ function drawMap(party) {
 drawGender('ČSSD')
 drawMap('ČSSD')
 writeStats('ČSSD')
-document.getElementById('partysel').addEventListener("change", function(e) {
-    drawGender(e.target.selectedOptions[0].value)
-    drawMap(e.target.selectedOptions[0].value)
-    writeStats(e.target.selectedOptions[0].value)
+
+$(document).ready(function() {
+    $('#partysel').select2();
+    $('#partysel').on('change', function(){
+        drawGender(this.value)
+        drawMap(this.value)
+        writeStats(this.value)
+    });
 });

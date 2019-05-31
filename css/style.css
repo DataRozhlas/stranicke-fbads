@@ -1,20 +1,24 @@
 #dboard {
     width: 100%;
-    height: 50vh;
 }
 
 #grafiky {
     width: 100%;
     height: 100%;
     display: flex;
+    flex-wrap: wrap;
 }
 
-#regiony {
-    max-height: 100%;
+.viz {
     width: 45%;
 }
 
-#gender {
-    max-height: 100%;
-    width: 45%;
+#stats {
+    font-size: 14pt;
 }
+
+@media only screen and (max-width: 600px) {
+    .viz {
+        width: 100%;
+    }
+  }
