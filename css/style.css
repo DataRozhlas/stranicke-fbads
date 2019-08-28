@@ -22,3 +22,7 @@
         width: 100%;
     }
   }
+
+.select2-results__option {
+    background-image: none !important;
+}
